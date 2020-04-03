@@ -1,0 +1,13 @@
+@charset "utf-8";
+
+@font-face {
+	font-family: "times-new-roman";
+	font-family: "times-new-roman";
+	src: url("times-new-roman.eot");
+	src: url("times-new-roman.eot?#iefix") format("embedded-opentype"),
+		url("times-new-roman.woff") format("woff"), url("times-new-roman.ttf")
+		format("truetype"), url("times-new-roman.svg#times-new-roman")
+		format("svg");
+	font-weight: normal;
+	font-style: normal;
+}

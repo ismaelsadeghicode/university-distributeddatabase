@@ -1,0 +1,72 @@
+@startuml
+
+class Storage {
+	-bigData: List<Object>
+	-data: List<Object>
+	
+	
+	+getBigData():List<Object>
+	+setBigData(List<Object>):void
+	
+	+save(Object):void
+	+delete(Object):void
+}
+
+class BusStorageRam {
+	-pageSize: int
+	-buffer: List<Object>
+	-storage: Storage
+	-ram: Ram
+	
+	+getPageSize():int
+	+setPageSize(int):void
+	+getBuffer():List<Object>
+	+setBuffer(List<Object>):void
+	+getStorage():Storage
+	+setStorage(Storage):void
+	+getRam():Ram
+	+setRam(Ram):void
+}
+
+class Ram {
+	-size: int
+	-buffer: List<Object>
+
+	+getSize():int
+	+setSize(int):void
+	+getBuffer():List<Object>
+	+setBuffer(List<Object>):void
+}
+
+class BusRamCpu {
+	-recordSize: int
+	-buffer: List<Object>
+	-ram: Ram
+	-cpu: Cpu
+
+	+getRecordSize():int
+	+setRecordSize(int):void
+	+getBuffer():List<Object>
+	+setBuffer(List<Object>):void
+	+getCpu():Cpu
+	+setCpu(Cpu):void
+	+getRam():Ram
+	+setRam(Ram):void
+}
+
+class Cpu extends Thread {
+	-buffer: List<Object>
+
+	+getBuffer():List<Object>
+	+setBuffer(List<Object>):void
+	
+	+sort(): List<Object> 
+}
+
+BusStorageRam "1"-->"1" Storage
+BusStorageRam "1"-->"1" Ram
+
+BusRamCpu "1"-->"1" Cpu
+BusRamCpu "1"-->"1" Ram
+
+@enduml

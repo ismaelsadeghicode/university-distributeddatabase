@@ -1,0 +1,170 @@
+package ws.safa.ubiversity.distributeddatabase.dao.basical;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
+
+import ws.safa.ubiversity.distributeddatabase.model.StudentInfo;
+
+@RequestScoped
+@Transactional
+public class StudentDao implements Dao<StudentInfo, Long> {
+
+	// @PersistenceContext(unitName = "distributeddatabase")
+	protected EntityManager entityManager;
+
+	@PostConstruct
+	public void init() {
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("distributeddatabase");
+		entityManager = entityManagerFactory.createEntityManager();
+	}
+
+	private void executeTransaction(Consumer<EntityManager> action) {
+		try {
+			entityManager.getTransaction().begin();
+			action.accept(entityManager);
+			entityManager.getTransaction().commit();
+		} catch (RuntimeException e) {
+			if (entityManager.getTransaction().isActive()) {
+				entityManager.getTransaction().rollback();
+			}
+			throw e;
+		}
+	}
+
+	@Override
+	public <S extends StudentInfo> S save(S entity) throws Exception {
+		executeTransaction(entityManager -> entityManager.persist(entity));
+		return entity;
+	}
+
+	@Override
+	public <S extends StudentInfo> List<S> save(Iterable<S> entities) throws Exception {
+		List<S> result = new ArrayList<>();
+		entityManager.getTransaction().begin();
+		entities.forEach(e -> {
+			entityManager.persist(e);
+			result.add(e);
+
+		});
+		entityManager.getTransaction().commit();
+		return result;
+	}
+
+	@Override
+	public <S extends StudentInfo> S update(S entity) {
+		executeTransaction(entityManager -> entityManager.merge(entity));
+		return entity;
+	}
+
+	@Override
+	public <S extends StudentInfo> List<S> update(Iterable<S> entities) throws Exception {
+		List<S> result = new ArrayList<>();
+		entityManager.getTransaction().begin();
+		entities.forEach(e -> {
+			entityManager.merge(e);
+			result.add(e);
+
+		});
+		entityManager.getTransaction().commit();
+		return result;
+	}
+
+	@Override
+	public Optional<StudentInfo> select(Long id) throws Exception {
+		return Optional.ofNullable(entityManager.find(StudentInfo.class, id));
+	}
+
+	@Override
+	public List<StudentInfo> select() throws Exception {
+		Query query = entityManager.createQuery("SELECT e FROM " + StudentInfo.class.getSimpleName() + " as e ORDER BY e.id");
+		//query.setFirstResult(first);
+		//query.setMaxResults(max);
+		return query.getResultList();
+	}
+
+	@Override
+	public Iterable<StudentInfo> select(List<Long> ids) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterable<StudentInfo> select(int first, int max) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <S extends StudentInfo> S delete(S entity) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long delete() throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long delete(Iterable<StudentInfo> entities) throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean deleteByID(Long id) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public long getCount() throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Iterable<Object> selectMultiType(String queryName, Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterable<Object> selectMultiType(String queryName, Map<String, Object> params, int first, int max)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterable<StudentInfo> select(String queryName, Map<String, Object> params, int first, int max)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterable<StudentInfo> executeNamedQuery(String queryName, Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterable<Object> executeQuery(String strQuery) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

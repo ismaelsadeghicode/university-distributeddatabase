@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="${project.name}">
+
+	<featureManager>
+		<feature>jsf-2.3</feature>
+		<feature>localConnector-1.0</feature>
+		<feature>microProfile-3.0</feature>
+		<feature>websocket-1.1</feature>
+	</featureManager>
+
+	<httpEndpoint id="defaultHttpEndpoint" httpPort="8181"
+		httpsPort="8543" />
+
+	<webApplication location="${project.name}.war"
+		contextRoot="/" />
+	<mpMetrics authentication="false" />
+
+	<!-- This is the keystore that will be used by SSL and by JWT. -->
+	<keyStore id="defaultKeyStore" location="public.jks"
+		type="JKS" password="atbash" />
+
+
+	<!-- The MP JWT configuration that injects the caller's JWT into a ResourceScoped 
+		bean for inspection. -->
+	<mpJwt id="jwtUserConsumer" keyName="theKeyId"
+		audiences="targetService" issuer="${jwt.issuer}" />
+
+	<!-- Postgres DataSource definition
+	<library id="postgresql-library">
+		<fileset dir="${shared.resource.dir}" id="PostgreSQLFileset"
+			includes="postgresql*.jar" />
+	</library>
+	<jdbcDriver id="postgresql-driver"
+		javax.sql.ConnectionPoolDataSource="org.postgresql.ds.PGConnectionPoolDataSource"
+		javax.sql.XADataSource="org.postgresql.xa.PGXADataSource"
+		libraryRef="postgresql-library" />
+	<dataSource id="ProjectnameDataSource"
+		jdbcDriverRef="postgresql-driver" jndiName="jdbc/myproject"
+		type="javax.sql.ConnectionPoolDataSource">
+		<properties databaseName="test"
+			password="postgres" portNumber="5432"
+			serverName="127.0.0.1" user="postgres" />
+	</dataSource>
+	 -->
+</server>

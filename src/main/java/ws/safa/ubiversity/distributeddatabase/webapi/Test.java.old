@@ -1,0 +1,56 @@
+package ws.safa.ubiversity.distributeddatabase.webapi;
+
+import javax.annotation.security.PermitAll;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import ws.safa.ubiversity.distributeddatabase.dao.basical.StudentDao;
+import ws.safa.ubiversity.distributeddatabase.model.StudentInfo;
+
+@RequestScoped
+@Path("/test")
+public class Test {
+
+	@Inject
+	private StudentDao studentDao;
+
+	@Path("/")
+	@GET
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public JsonObject test() {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		System.getProperties().entrySet().stream()
+				.forEach(entry -> builder.add((String) entry.getKey(), (String) entry.getValue()));
+
+		return builder.build();
+	}
+
+	@Path("/savestudent")
+	@PUT
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public JsonObject save(StudentInfo studentInfo) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		try {
+			studentDao.save(studentInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return builder.build();
+	}
+
+}

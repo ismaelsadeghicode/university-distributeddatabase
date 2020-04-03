@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+
+	<ui:define name="body.container">
+		<h:panelGroup layout="block" class="alert alert-danger" role="alert"
+			rendered="#{mainPage.hasError()}">
+			<h:outputLabel value="#{mainPage.errorMessage}" />
+		</h:panelGroup>
+
+		<div class="alert alert-primary" role="alert">
+
+			<h:form id="frmInputData">
+				<div class="form-row">
+					<div class="col">
+						<h:outputLabel value="تعداد سی پی یو ها را وارد کنید" />
+						<h:inputText class="form-control" value="#{mainPage.cpuCount}"
+							a:placeholder="تعداد سی پی یو ها">
+							<f:ajax event="keyup" listener="#{mainPage.onKeyuplistener()}"
+								render=":pnlAllCpus" />
+						</h:inputText>
+					</div>
+					<div class="col">
+						<h:outputLabel value="تعداد اعداد تصادفی را وارد کنید" />
+						<h:inputText class="form-control"
+							value="#{mainPage.noRandomGeneration}"
+							a:placeholder="تعداد اعداد تولید شده" />
+					</div>
+					<div class="col">
+						<h:outputLabel value="الگوریتم را انتخاب کنید" />
+						<h:selectOneMenu class="form-control custom-select"
+							value="#{mainPage.selectedAlgorithm}">
+							<f:selectItem itemValue="merge_all"
+								itemLabel="Parallel Merge-All" />
+							<f:selectItem itemValue="binary_merge"
+								itemLabel="Parallel Binary-Merge" />
+							<f:selectItem itemValue="redistribution_binary_merge"
+								itemLabel="Parallel Redistribution Binary-Merge" />
+							<f:selectItem itemValue="redistribution_merge_all"
+								itemLabel="Parallel Redistribution Merge-All" />
+							<f:selectItem itemValue="partitioned"
+								itemLabel="Parallel Partitioned" />
+						</h:selectOneMenu>
+					</div>
+					<div class="col">
+						<h:outputLabel value="برای شروع کلیک کنید" />
+						<h:commandLink class="btn btn-primary btn-block shadow"
+							action="#{mainPage.btnStartClick()}" value="">
+							<i class="fas fa-play"></i>
+						</h:commandLink>
+					</div>
+				</div>
+			</h:form>
+
+		</div>
+
+		<h:panelGroup layout="block" style="width: 100%;"
+			rendered="#{mainPage.selectedAlgorithm.equals('merge_all')}">
+			<button class="btn btn-outline-secondary btn-sm btn-block mb-3"
+				type="button" data-toggle="collapse" data-target="#collapseExample"
+				aria-expanded="false" aria-controls="collapseExample">نمایش
+				فرمول ها</button>
+			<div class="collapse" id="collapseExample">
+				<div class="alert alert-success"
+					style="font-family: 'times-new-roman'; font-size: normal; text-align: center"
+					role="alert">
+					<p dir="ltr" style="font-family:">
+						<b>1) Local merge Sort =></b> Cost = I/O Cost + CPU Cost +
+						Communication Cost
+					</p>
+					<hr />
+					<div dir="ltr" style="text-align: left;">
+
+						<dl class="row">
+							<dt class="col-sm-12">I/O Cost:</dt>
+							<dd class="col-sm-12" style="font-size: normal;">
+								<p>
+									I/O Cost = Load Cost = (R<sub>i</sub>/P) * Number of passes *
+									IO
+								</p>
+							</dd>
+
+							<dt class="col-sm-12" style="width: 100%">CPU Cost = Select
+								cost + Sorting cost + Merging cost + Generation result cost</dt>
+							<dd class="col-sm-12">
+								<p>
+									Select cost = |R<sub>i</sub>| * Number of passes * (t<sub>r</sub>
+									+ t<sub>w</sub>)<br /> Sorting cost = |R<sub>i</sub>| *
+									&#8968; Log<sub>2</sub>( |R<sub>i</sub>| ) &#8969; * t<sub>s</sub><br />
+									Merging cost = |R<sub>i</sub>| * ( Number of passes - 1) * t<sub>m</sub><br />
+									Generation result cost = |R<sub>i</sub>| * Number of passes * t<sub>w</sub><br />
+								</p>
+							</dd>
+
+							<dt class="col-sm-12">Communication cost</dt>
+							<dd class="col-sm-12">
+								<p>
+									Communication cost = (R<sub>i</sub> / P) * (m<sub>p</sub> + m<sub>l</sub>)<br />
+								</p>
+							</dd>
+						</dl>
+					</div>
+
+
+
+
+					<p dir="ltr" style="font-family:">
+						<b>2) Final merging =></b> Cost = Communication Cost + I/O Cost +
+						CPU Cost
+					</p>
+					<hr />
+					<div dir="ltr" style="text-align: left;">
+
+						<dl class="row">
+							<dt class="col-sm-12">Communication cost</dt>
+							<dd class="col-sm-12">
+								<p>
+									Communication cost = (R / P) * m<sub>p</sub><br />
+								</p>
+							</dd>
+
+							<dt class="col-sm-12">I/O Cost:</dt>
+							<dd class="col-sm-12" style="font-size: normal;">
+								<p>
+									Save Cost = (R / P) * (Number of passes + 1) * IO<br /> Load
+									Cost = (R / P) * Number of passes * IO
+								</p>
+							</dd>
+
+							<dt class="col-sm-12" style="width: 100%">CPU Cost = Select
+								cost + Merging cost + Generation result cost</dt>
+							<dd class="col-sm-12">
+								<p>
+									Select cost = |R| * Number of passes * (t<sub>r</sub> + t<sub>w</sub>)<br />
+									Merging cost = |R| * Number of passes * t<sub>m</sub><br />
+									Generation result cost = |R| * Number of passes * t<sub>w</sub><br />
+								</p>
+							</dd>
+
+						</dl>
+					</div>
+
+				</div>
+			</div>
+		</h:panelGroup>
+
+		<h:panelGroup layout="block" style="width: 100%;" rendered="false">
+			<button class="btn btn-outline-secondary btn-sm btn-block mb-3"
+				type="button" data-toggle="collapse" data-target="#collapseExample"
+				aria-expanded="false" aria-controls="collapseExample">نمایش
+				فرمول ها</button>
+			<div class="collapse" id="collapseExample">
+				<div class="alert alert-success"
+					style="font-family: 'times-new-roman'; font-size: normal; text-align: center"
+					role="alert">
+					<p dir="ltr" style="font-family:">1)Local merge Sort => Cost =
+						I/O Cost + CPU Cost + Communication Cost</p>
+					<hr />
+					<div dir="ltr" style="text-align: left;">
+
+						<dl class="row">
+							<dt class="col-sm-12">I/O Cost:</dt>
+							<dd class="col-sm-12" style="font-size: normal;">
+								<p>
+									I/O Cost = Load Cost = (R<sub>i</sub>/P) * Number of passes *
+									IO
+								</p>
+							</dd>
+
+							<dt class="col-sm-12" style="width: 100%">CPU Cost = Select
+								cost + Sorting cost + Merging cost + Generation result cost</dt>
+							<dd class="col-sm-12">
+								<p>
+									Select cost = |R<sub>i</sub>| * Number of passes * (t<sub>r</sub>
+									+ t<sub>w</sub>)<br /> Sorting cost = |R<sub>i</sub>| *
+									&#8968; Log<sub>2</sub>( |R<sub>i</sub>| ) &#8969; * t<sub>s</sub><br />
+									Merging cost = |R<sub>i</sub>| * ( Number of passes - 1) * t<sub>m</sub><br />
+									Generation result cost = |R<sub>i</sub>| * Number of passes * t<sub>w</sub><br />
+								</p>
+							</dd>
+
+							<dt class="col-sm-12">Communication cost</dt>
+							<dd class="col-sm-12">
+								<p>
+									Communication cost = (R<sub>i</sub> / P) * (m<sub>p</sub> + m<sub>l</sub>)<br />
+								</p>
+							</dd>
+						</dl>
+					</div>
+
+				</div>
+			</div>
+		</h:panelGroup>
+
+		<h:form id="frmChart">
+			<h:panelGroup layout="block" class="card shadow"
+				rendered="#{mainPage.showChart}" id="pnlChart">
+				<div class="card-body">
+					<div id="container">
+						<canvas id="canvas"></canvas>
+					</div>
+					<h:outputScript type="text/javascript">
+						//<![CDATA[
+						var MONTHS = [ 'January', 'February', 'March', 'April',
+								'May', 'June', 'July', 'August', 'September',
+								'October', 'November', 'December' ];
+						var color = Chart.helpers.color;
+						var barChartData = {
+							labels : #{mainPage.createChartlabels()},
+							datasets : #{mainPage.createChartDatasets()}
+
+						};
+
+						window.onload = function() {
+							var ctx = document.getElementById('canvas')
+									.getContext('2d');
+							window.myBar = new Chart(ctx, {
+								type : 'bar',
+								data : barChartData,
+								options : {
+									responsive : true,
+									legend : {
+										position : 'top',
+									},
+									title : {
+										display : true,
+										text : 'نمودار کارکرد سی پی یو ها در الگوریتم انتخابی'
+									}
+								}
+							});
+
+						};
+
+						document
+								.getElementById('randomizeData')
+								.addEventListener(
+										'click',
+										function() {
+											var zero = Math.random() < 0.2 ? true
+													: false;
+											barChartData.datasets
+													.forEach(function(dataset) {
+														dataset.data = dataset.data
+																.map(function() {
+																	return zero ? 0.0
+																			: randomScalingFactor();
+																});
+
+													});
+											window.myBar.update();
+										});
+
+						var colorNames = Object.keys(window.chartColors);
+						document
+								.getElementById('addDataset')
+								.addEventListener(
+										'click',
+										function() {
+											var colorName = colorNames[barChartData.datasets.length
+													% colorNames.length];
+											var dsColor = window.chartColors[colorName];
+											var newDataset = {
+												label : 'Dataset '
+														+ (barChartData.datasets.length + 1),
+												backgroundColor : color(dsColor)
+														.alpha(0.5).rgbString(),
+												borderColor : dsColor,
+												borderWidth : 1,
+												data : []
+											};
+
+											for (var index = 0; index < barChartData.labels.length; ++index) {
+												newDataset.data
+														.push(randomScalingFactor());
+											}
+
+											barChartData.datasets
+													.push(newDataset);
+											window.myBar.update();
+										});
+
+						document
+								.getElementById('addData')
+								.addEventListener(
+										'click',
+										function() {
+											if (barChartData.datasets.length > 0) {
+												var month = MONTHS[barChartData.labels.length
+														% MONTHS.length];
+												barChartData.labels.push(month);
+
+												for (var index = 0; index < barChartData.datasets.length; ++index) {
+													// window.myBar.addData(randomScalingFactor(), index);
+													barChartData.datasets[index].data
+															.push(randomScalingFactor());
+												}
+
+												window.myBar.update();
+											}
+										});
+
+						document.getElementById('removeDataset')
+								.addEventListener('click', function() {
+									barChartData.datasets.pop();
+									window.myBar.update();
+								});
+
+						document.getElementById('removeData').addEventListener(
+								'click',
+								function() {
+									barChartData.labels.splice(-1, 1); // remove the label first
+
+									barChartData.datasets.forEach(function(
+											dataset) {
+										dataset.data.pop();
+									});
+
+									window.myBar.update();
+								});
+
+						//]]>
+					</h:outputScript>
+				</div>
+			</h:panelGroup>
+		</h:form>
+
+		<h:panelGroup layout="block" class="card  shadow  mt-3"
+			rendered="#{!mainPage.selectedAlgorithm.isEmpty()}">
+			<div class="row no-gutters">
+				<div class="col-md-1">
+					<div class="card" style="height: 100%;">
+						<div class="card-body bg-primary text-white"
+							style="text-align: center;">
+							<h:outputText value="فضای دیسک" class="font-weight-bold" />
+							<i class="fas fa-save"></i>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-11">
+					<div class="card-body">
+						<h:panelGroup layout="block" id="pnlStorage">
+							<h:form>
+								<div class="btn-group" role="group" aria-label="Basic example"
+									style="width: 100%;">
+									<h:commandLink class="btn btn-outline-success"
+										value="دانلود داده های خام"
+										action="#{mainPage.btnDownloadDataClick()}">
+										<i class="fas fa-download" style="float: right;"></i>
+									</h:commandLink>
+									<h:commandLink class="btn btn-outline-success"
+										action="#{mainPage.btnDownloadSortDataClick()}"
+										value="دانلود داده های مرتب شده">
+										<i class="fas fa-cloud-download-alt" style="float: right;"></i>
+									</h:commandLink>
+								</div>
+							</h:form>
+						</h:panelGroup>
+					</div>
+				</div>
+			</div>
+		</h:panelGroup>
+
+		<h:panelGroup layout="block" id="pnlAllCpus">
+			<h:panelGroup layout="block" id="pnlCpusMergeAll"
+				rendered="#{mainPage.selectedAlgorithm.equals('merge_all')}">
+				<ui:repeat var="cpu" value="#{mainPage.cpus}" varStatus="status">
+					<div class="card  shadow  mt-3">
+						<div class="row no-gutters">
+							<div class="col-md-1">
+								<div class="card" style="height: 100%;">
+									<div class="card-body bg-success text-white"
+										style="text-align: center;">
+										<h:outputText value="سی پی یو شماره #{status.index + 1}"
+											class="font-weight-bold" />
+										<i class="fas fa-microchip"></i>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-11" style="font-family: 'times-new-roman';text-align: center;">
+								<div class="card-body">
+									<div class="row">
+										<div class="col">
+											<p class="card-title">
+												#{mainPage.fullnameSelectedAlgorithm}</p>
+										</div>
+									</div>
+
+									<h:form>
+										<div class="btn-group" role="group" aria-label="Basic example"
+											style="width: 100%;">
+											<h:commandLink class="btn btn-info" value="Local Round Robin"
+												action="#{mainPage.btnDownloadParallelMergeAllRR(status.index)}" />
+											<h:commandLink class="btn btn-info" value="Local Sort"
+												action="#{mainPage.btnDownloadParallelMergeAllLS(status.index)}" />
+											<h:commandLink
+												class="#{mainPage.getStylebtnDownloadParallelMergeAllFM(status.index)}"
+												value="Final Marge All"
+												action="#{mainPage.btnDownloadParallelMergeAllFM(status.index)}" />
+										</div>
+									</h:form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" id="BinaryMerge"
+				rendered="#{mainPage.selectedAlgorithm.equals('binary_merge')}">
+				<ui:repeat var="cpu" value="#{mainPage.cpus}" varStatus="status">
+					<div class="card  shadow  mt-3">
+						<div class="row no-gutters">
+							<div class="col-md-1">
+								<div class="card" style="height: 100%;">
+									<div class="card-body bg-success text-white"
+										style="text-align: center;">
+										<h:outputText value="سی پی یو شماره #{status.index + 1}"
+											class="font-weight-bold" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-11" style="font-family: 'times-new-roman';text-align: center;">
+								<div class="card-body">
+									<div class="row">
+										<div class="col">
+											<p class="card-title">
+												#{mainPage.fullnameSelectedAlgorithm}</p>
+										</div>
+									</div>
+
+									<h:form>
+										<div class="btn-group" role="group" aria-label="Basic example"
+											style="width: 100%;">
+											<h:commandLink class="btn btn-info"
+												value="Round Robin"
+												action="#{mainPage.btnDownloadParallelBinaryMergeRR(status.index)}" />
+
+											<ui:repeat var="steps"
+												value="#{mainPage.getParallelBinarySteps()}"
+												varStatus="stpstatus">
+
+												<h:commandLink
+													class="#{mainPage.getStyleBtnDownloadParallelBinaryMergePS(cpu,stpstatus.index)}"
+													value="Sort #{stpstatus.index+1}"
+													action="#{mainPage.btnDownloadParallelMergeAllLS(status.index)}" />
+												<h:commandLink
+													class="#{mainPage.getStyleBtnDownloadParallelBinaryMergePM(cpu,stpstatus.index)}"
+													value="Marge #{stpstatus.index+1}"
+													action="#{mainPage.btnDownloadParallelMergeAllFM(status.index)}" />
+
+											</ui:repeat>
+										</div>
+									</h:form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" id="RedistributionBinaryMerge"
+				rendered="#{mainPage.selectedAlgorithm.equals('redistribution_binary_merge')}">
+				<ui:repeat var="cpu" value="#{mainPage.cpus}" varStatus="status">
+					<div class="card  shadow  mt-3">
+						<div class="row no-gutters">
+							<div class="col-md-1">
+								<div class="card" style="height: 100%;">
+									<div class="card-body bg-success text-white"
+										style="text-align: center;">
+										<h:outputText value="سی پی یو شماره #{status.index + 1}"
+											class="font-weight-bold" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-11" style="font-family: 'times-new-roman';text-align: center;">
+								<div class="card-body">
+									<div class="row">
+										<div class="col">
+											<p class="card-title">
+												#{mainPage.fullnameSelectedAlgorithm}</p>
+										</div>
+									</div>
+
+									<h:form>
+										<div class="btn-group" role="group" aria-label="Basic example"
+											style="width: 100%;">
+											<h:commandLink class="btn btn-info"
+												value="Round Robin"
+												action="#{mainPage.btnDownloadRedistributionBinaryMergeRR(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="LocalSort 1"
+												action="#{mainPage.btnDownloadRedistributionBinaryMergeLS(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="BinaryRedistribute"
+												action="#{mainPage.btnDownloadRedistributionBinaryMergeBR(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="LocalSort 2"
+												action="#{mainPage.btnDownloadRedistributionBinaryMergeBRS(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="Redistribute"
+												action="#{mainPage.btnDownloadRedistributionBinaryMergePR(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="LocalSort 3"
+												action="#{mainPage.btnDownloadRedistributionBinaryMergeRS(status.index)}" />
+										</div>
+									</h:form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" id="redistributionMergeAll"
+				rendered="#{mainPage.selectedAlgorithm.equals('redistribution_merge_all')}">
+				<ui:repeat var="cpu" value="#{mainPage.cpus}" varStatus="status">
+					<div class="card  shadow  mt-3">
+						<div class="row no-gutters">
+							<div class="col-md-1">
+								<div class="card" style="height: 100%;">
+									<div class="card-body bg-success text-white"
+										style="text-align: center;">
+										<h:outputText value="سی پی یو شماره #{status.index + 1}"
+											class="font-weight-bold" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-11" style="font-family: 'times-new-roman';text-align: center;">
+								<div class="card-body">
+									<div class="row">
+										<div class="col">
+											<p class="card-title">
+												#{mainPage.fullnameSelectedAlgorithm}</p>
+										</div>
+									</div>
+
+									<h:form>
+										<div class="btn-group" role="group" aria-label="Basic example"
+											style="width: 100%;">
+											<h:commandLink class="btn btn-info"
+												value="Round Robin"
+												action="#{mainPage.btnDownloadRedistributionMergeAllRR(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="LocalSort 1"
+												action="#{mainPage.btnDownloadRedistributionMergeAllLS(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="Redistribute"
+												action="#{mainPage.btnDownloadRedistributionMergeAllPR(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="LocalSort 2"
+												action="#{mainPage.btnDownloadRedistributionMergeAllRS(status.index)}" />
+										</div>
+									</h:form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" id="partitioned"
+				rendered="#{mainPage.selectedAlgorithm.equals('partitioned')}">
+				<ui:repeat var="cpu" value="#{mainPage.cpus}" varStatus="status">
+					<div class="card  shadow  mt-3">
+						<div class="row no-gutters">
+							<div class="col-md-1">
+								<div class="card" style="height: 100%;">
+									<div class="card-body bg-success text-white"
+										style="text-align: center;">
+										<h:outputText value="سی پی یو شماره #{status.index + 1}"
+											class="font-weight-bold" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-11" style="font-family: 'times-new-roman';text-align: center;">
+								<div class="card-body">
+									<div class="row">
+										<div class="col">
+											<p class="card-title">
+												#{mainPage.fullnameSelectedAlgorithm}</p>
+										</div>
+									</div>
+
+									<h:form>
+										<div class="btn-group" role="group" aria-label="Basic example"
+											style="width: 100%;">
+											<h:commandLink class="btn btn-info"
+												value="Round Robin"
+												action="#{mainPage.btnDownloadPartitionedSortRR(status.index)}" />
+											<h:commandLink class="btn btn-info"
+												value="Redistribute"
+												action="#{mainPage.btnDownloadPartitionedSortPR(status.index)}" />
+											<h:commandLink class="btn btn-info" value="LocalSort"
+												action="#{mainPage.btnDownloadPartitionedSortRS(status.index)}" />
+										</div>
+									</h:form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</h:panelGroup>
+
+		</h:panelGroup>
+	</ui:define>
+
+</ui:composition>
+</html>

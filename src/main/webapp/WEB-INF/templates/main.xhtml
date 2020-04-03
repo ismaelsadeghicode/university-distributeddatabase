@@ -1,0 +1,54 @@
+<!DOCTYPE html >
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+	<title>Safa Kaveh Distribution Database</title>
+	<link href="${request.contextPath}/resources/images/database.png"
+		rel="icon" type="image/x-icon" />
+	<link rel="stylesheet"
+		href="${request.contextPath}/resources/bootstrap/bootstrap.min.css" />
+	<link rel="stylesheet"
+		href="${request.contextPath}/resources/fonts/Far_Yekan/Far_Yekan.css" />
+	<link rel="stylesheet"
+		href="${request.contextPath}/resources/fonts/timesnewroman/times-new-roman.css" />
+	<link rel="stylesheet"
+		href="${request.contextPath}/resources/fonts/awesome/css/all.css" />
+	<link rel="stylesheet"
+		href="${request.contextPath}/resources/chartjs/Chart.min.css" />
+	<script src="${request.contextPath}/resources/chartjs/Chart.min.js"></script>
+	<script
+		src="${request.contextPath}/resources/chartjs/Chart.bundle.min.js"></script>
+	<script src="${request.contextPath}/resources/chartjs/utils.js"></script>
+</h:head>
+<h:body style="font-family: 'Far_Yekan';direction: rtl;">
+
+	<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#"> پایگاه داده توزیعی و سیار<sub>
+				صفا کاوه </sub></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+	</nav>
+
+	<div class="container mt-3 mb-5">
+		<ui:insert name="body.container"></ui:insert>
+	</div>
+
+	<nav class="navbar navbar-light" style="background-color: #CCE5FF;">
+		<a class="text-muted" href="#" style="margin: auto;">میتوانید سورس کد برنامه را با این دستور دریافت کنید git clone https://safakaveh@bitbucket.org/safakaveh/university-distributeddatabase.git</a>
+	</nav>
+
+
+	<script
+		src="${request.contextPath}/resources/bootstrap/jquery-3.3.1.slim.min.js"></script>
+	<script src="${request.contextPath}/resources/bootstrap/popper.min.js"></script>
+	<script
+		src="${request.contextPath}/resources/bootstrap/bootstrap.min.js"></script>
+</h:body>
+</html>
